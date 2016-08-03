@@ -1,3 +1,23 @@
+/*
+ * XIdea--IntellJ IDEA plugin for FPGA toolchains.
+ *
+ *     Copyright (C) 2016 Andrey Akhmetov
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package edu.cooper.akhmetov.xidea;
 
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -9,6 +29,7 @@ import edu.cooper.akhmetov.xidea.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class VerilogAnnotator implements Annotator {
@@ -20,11 +41,19 @@ public class VerilogAnnotator implements Annotator {
                 annotateVerilogModuleInstantiation(elem, holder, vmn);
 
             }
-        } if(elem instanceof VerilogUdpName){
+        } else if(elem instanceof VerilogUdpName){
             VerilogUdpName vudpn = (VerilogUdpName) elem;
             if(vudpn.getParent() instanceof VerilogUdpInstantiation){
                 annotateVerilogUdpInstantiation(elem, holder, vudpn);
 
+            }
+        } else if (elem instanceof VerilogVariableName){
+            VerilogVariableName vvnn = (VerilogVariableName) elem;
+            String nn = vvnn.getIdentifier().getText();
+            VerilogDescription desc = vvnn.getEnclosingDescription();
+            if(desc==null) return;
+            if(VerilogUtils.findDeclaredVariables(desc).stream().filter(vvn -> nn.equals(vvn.getIdentifier().getText())).collect(Collectors.counting())==0){
+                holder.createErrorAnnotation(elem.getTextRange(), "Cannot find variable "+nn); // TODO add intention to add module here
             }
         }
     }

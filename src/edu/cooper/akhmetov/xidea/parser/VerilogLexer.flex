@@ -22,6 +22,8 @@ import static edu.cooper.akhmetov.xidea.parser.VerilogTypes.*;
 EOL=\R
 WHITE_SPACE=\s
 
+TIMEBASE=[0-9]+[ \t\n\x0B\f\r]*[munpf]?s
+NEWLINE=[\r\n]
 WHITE_SPACE=[ \t\n\x0B\f\r]
 LINE_COMMENT="//".*
 BLOCK_COMMENT="/"\*([^*]|\*+[^*/])*(\*+"/")?
@@ -30,7 +32,7 @@ DEC_NUM=[0-9_]+
 NUM_SCI=[0-9_]+(\.[0-9_]*)?[eE][+\-]?[0-9_]+
 DEC_FRAC=[0-9_]+(\.[0-9_]*)?
 UNSIGNED=[0-9_]+
-NUM_WITH_BASE=[0-9]*'[bBoOdDhH][0-9a-fA-FxXzZ?]+
+NUM_WITH_BASE=[0-9]*'[bBoOdDhH][0-9a-fA-FxXzZ?_]+
 SPEC_BLOCK=specify.*?endspecify
 IDENTIFIER=[a-zA-Z_][a-zA-Z0-9_$]*
 SYSIDENTIFIER=\$[a-zA-Z_][a-zA-Z0-9_$]*
@@ -123,11 +125,14 @@ SYSIDENTIFIER=\$[a-zA-Z_][a-zA-Z0-9_$]*
   ">"                  { return GT; }
   ">>"                 { return SHR; }
   "<<"                 { return SHL; }
+  "`timescale"         { return BT_TIMESCALE; }
   "task"               { return TASK; }
   "function"           { return FUNCTION; }
   "kw_scalared"        { return KW_SCALARED; }
   "kw_vectored"        { return KW_VECTORED; }
 
+  {TIMEBASE}           { return TIMEBASE; }
+  {NEWLINE}            { return NEWLINE; }
   {WHITE_SPACE}        { return WHITE_SPACE; }
   {LINE_COMMENT}       { return LINE_COMMENT; }
   {BLOCK_COMMENT}      { return BLOCK_COMMENT; }
