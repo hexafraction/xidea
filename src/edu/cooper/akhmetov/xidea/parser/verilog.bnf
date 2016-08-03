@@ -1,0 +1,307 @@
+{
+  parserClass="edu.cooper.akhmetov.xidea.parser.VerilogParser"
+  parserUtilClass="edu.cooper.akhmetov.xidea.parser.VerilogParserUtil"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Verilog"
+  psiImplClassSuffix="Impl"
+  psiPackage="edu.cooper.akhmetov.xidea.psi"
+  psiImplPackage="edu.cooper.akhmetov.xidea.psi.impl"
+
+  elementTypeHolderClass="edu.cooper.akhmetov.xidea.parser.VerilogTypes"
+  elementTypeClass="edu.cooper.akhmetov.xidea.parser.VerilogElementType"
+  tokenTypeClass="edu.cooper.akhmetov.xidea.parser.VerilogTokenType"
+  psiImplUtilClass="edu.cooper.akhmetov.xidea.psi.impl.VerilogPsiUtil"
+  tokens=[
+    timebase='regexp:[0-9]+\s*[munpf]?s'
+
+    NEWLINE='regexp:[\r\n]'
+    WHITE_SPACE='regexp:\s'
+    kw_module='module'
+    kw_endmodule='endmodule'
+    //space='regexp:\s+'
+    LINE_COMMENT='regexp://.*'
+    BLOCK_COMMENT='regexp:/\*([^*]|\*+[^*/])*(\*+/)?'
+    QUOTED_STRING="regexp:\"([^\\\"\r\n]|\\[^\r\n])*\"?"
+    semicolon=';'
+    lparen='('
+    rparen=')'
+    lbrace='{'
+    rbrace='}'
+    comma=','
+    nbequals='<='
+    equals='='
+    kw_input='input'
+    kw_output='output'
+    kw_inout='inout'
+    kw_reg='reg'
+    kw_real='real'
+    kw_primitive='primitive'
+    kw_endprimitive='endprimitive'
+    kw_initial='initial'
+    kw_table='table'
+    kw_endtable='endtable'
+    kw_time='time'
+    kw_parameter='parameter'
+    kw_assign='assign'
+    kw_integer='integer'
+    kw_initial='initial'
+    kw_always='always'
+    kw_case='case'
+    kw_casex='casex'
+    kw_casez='casez'
+    kw_if='if'
+    dot='.'
+    lbrack='['
+    pound='#'
+    rbrack=']'
+    question='?'
+    colon=':'
+    at='@'
+    kw_event='event'
+    kw_defparam='defparam'
+    kw_forever='forever'
+    kw_while='while'
+    kw_repeat='repeat'
+    kw_for='for'
+    kw_endcase='endcase'
+    kw_or='or'
+    kw_posedge='posedge'
+    kw_negedge='negedge'
+    kw_wait='wait'
+    rarrow='->'
+    kw_else='else'
+    rarroweq='=>'
+    kw_disable='disable'
+    kw_deassign='deassign'
+    kw_force='force'
+    kw_release='release'
+    kw_default='default'
+    kw_begin='begin'
+    kw_end='end'
+    kw_fork='fork'
+    kw_join='join'
+    //kw_specify='specify'
+    //kw_endspecify='endspecify'
+    //kw_specparam='specparam'
+    dec_num='regexp:[0-9_]+'
+    num_sci='regexp:[0-9_]+(\.[0-9_]*)?[eE][+\-]?[0-9_]+'
+    dec_frac='regexp:[0-9_]+(\.[0-9_]*)?'
+    unsigned='regexp:[0-9_]+'
+    num_with_base="regexp:[0-9]*'[bBoOdDhH][0-9a-fA-FxXzZ?]+"
+    spec_block='regexp:specify.*?endspecify'
+    identifier='regexp:[a-zA-Z_][a-zA-Z0-9_$]*'
+    sysidentifier='regexp:\$[a-zA-Z_][a-zA-Z0-9_$]*'
+    plus='+'
+    minus='-'
+    ampersand='&'
+    pipe='|'
+    cartilde='^~'
+    tilcaret='~^'
+    caret='^'
+    exclam='!'
+    tilde='~'
+    nand='~&'
+    carpipe='^|'
+    asterisk='*'
+    solidus='/'
+    percent='%'
+    dbleq='=='
+    neq='!='
+    tripleeq='==='
+    ndeq='!=='
+    dblamp='&&'
+    dblpipe='||'
+    gte='>='
+    lt='<'
+    gt='>'
+    shr='>>'
+    shl='<<'
+    bt_timescale='`timescale'
+  ]
+}
+
+//http://www.verilog.com/VerilogBNF.html
+
+
+verilogFile ::= timescale? description*
+timescale ::= bt_timescale timebase solidus timebase NEWLINE
+
+description ::= module | udp
+
+module ::= kw_module module_name portlist? semicolon
+    module_item*
+    kw_endmodule {mixin="edu.cooper.akhmetov.xidea.psi.impl.VerilogNamedElementImpl"
+                   implements="edu.cooper.akhmetov.xidea.psi.VerilogNamedElement" methods=[getName setName getNameIdentifier]}
+
+portlist ::= lparen (port (comma port)*)? rparen
+port ::= new_port|old_port
+new_port ::= port_dir kw_reg? range? identifier
+old_port ::=identifier
+port_dir ::= kw_input|kw_output|kw_inout
+range ::= lbrack constexpr colon constexpr rbrack
+module_name ::= identifier {mixin="edu.cooper.akhmetov.xidea.psi.impl.VerilogReferenceImpl"
+                             implements="edu.cooper.akhmetov.xidea.psi.VerilogReference"
+                              methods=[getElement getRangeInElement resolve getCanonicalText handleElementRename bindToElement isReferenceTo getVariants isSoft multiResolve getName setName]}
+var_name ::= identifier
+module_item ::= param_decl|input_decl|output_decl|inout_decl|net_decl|reg_decl|time_decl|int_decl|real_decl|event_decl|gate_decl|udp_instantiation|module_instantiation|param_ovrd|cont_assign|spec_block|init_stmt|always_stmt|task|function
+udp_name ::= identifier
+udp ::= kw_primitive udp_name lparen varlist rparen semicolon
+    udp_decl+
+    udp_init?
+    udp_table
+    kw_endprimitive {mixin="edu.cooper.akhmetov.xidea.psi.impl.VerilogNamedElementImpl"
+                                       implements="edu.cooper.akhmetov.xidea.psi.VerilogNamedElement" methods=[getName setName getNameIdentifier]}
+udp_decl ::= output_decl|reg_decl|input_decl
+udp_init ::= kw_initial var_name equals udp_init_val semicolon
+udp_init_val ::= "1'b0" | "1'b1" | "1'bx" | "1'bX" | "1'B0" | "1'B1" | "1'Bx" | "1'BX" | 1 | 0
+udp_table ::= kw_table table_entries kw_endtable
+table_entries ::= tbl_comb+ | tbl_seq+
+tbl_out ::= '0' | '1' | 'x' | 'X'
+tbl_lev ::= '0' | '1' | 'x' | 'X' | '?' | 'b' | 'B'
+tbl_edge ::= 'r' | 'R' | 'f' | 'F' | 'p' | 'P' | 'n' | 'N' | '*'
+tbl_comb ::= lv_inp_list colon tbl_out semicolon
+tbl_seq ::= (edge_inp_list | lv_inp_list) colon tbl_lev colon (tbl_out | '-') semicolon
+lv_inp_list ::= tbl_lev+
+edge_inp_list ::= tbl_lev* edge tbl_lev*
+edge ::= (lparen tbl_lev tbl_lev rparen) | tbl_edge
+range_or_type ::= range | kw_integer | kw_real
+fnname ::= identifier
+tf_declaration ::= param_decl | input_decl | output_decl | inout_decl | reg_decl | time_decl | int_decl | real_decl
+
+// declarations
+varlist ::= var_name (comma var_name)*
+varlist_assign ::= (varlist) | (var_name expandrange? delay? assign_list)
+assign_list ::= assignment (comma assignment)*
+param_decl ::= kw_parameter param_assign (comma param_assign)* semicolon
+param_assign ::= identifier equals constexpr
+output_decl ::= kw_output range? varlist_assign semicolon
+inout_decl ::= kw_inout range? varlist_assign semicolon
+input_decl ::= kw_input range? varlist_assign semicolon
+int_decl ::= kw_integer regvar_list
+reg_decl ::= kw_reg range? (regvar_list) semicolon
+time_decl ::= kw_time range? regvar_list semicolon
+real_decl ::= kw_real range? regvar_list semicolon
+event_decl ::= kw_event identifier (comma identifier)*
+net_decl ::= (nettype expandrange? delay? varlist_assign semicolon)
+expandrange ::= ((kw_scalared|kw_vectored)? range)
+nettype ::= 'wire' | 'tri' | 'tri1' | 'supply0' | 'wand' | 'triand' | 'tri0' | 'supply1' | 'wor' | 'trior' | 'trireg'
+cont_assign ::= (kw_assign drive_strength? delay? assign_list semicolon)
+    | (nettype drive_strength?  expandrange? delay? assign_list semicolon)
+param_ovrd ::= kw_defparam param_assign (comma param_assign)?
+regvar_list ::= regvar (comma regvar)*
+regvar ::= (identifier | (identifier lbrack constexpr colon constexpr)) (equals expr)?
+drive_strength ::= (lparen str0 comma str1 rparen) | (lparen str1 comma str0 rparen)
+str0 ::= 'supply0' | 'strong0' | 'pull0' | 'weak0' | 'highz0'
+str1 ::= 'supply1' | 'strong1' | 'pull1' | 'weak1' | 'highz1'
+
+
+
+// module instantiation
+module_instantiation ::= module_name module_instance (comma module_instance)* semicolon
+param_val_assign ::= param_val_assign_old | param_val_assign_new
+param_val_assign_new ::= pound lparen namedplug (comma namedplug)* rparen
+param_val_assign_old ::= pound lparen expr (comma expr)* rparen
+namedplug ::= dot identifier lparen expr rparen
+module_instance ::= identifier lparen connlist? rparen
+connlist ::= (namedplug (comma namedplug)*) | (modport (comma modport)*)
+modport ::= expr?
+
+//primitive instances
+gate_decl ::= gatetype drive_strength? delay? gate_instance (comma gate_instance)* semicolon
+gatetype ::= 'and' | 'nand' | 'or' | 'nor' | 'xor' | 'xnor' | 'buf'
+             | 'bufif0' | 'bufif1' | 'not' | 'notif0' | 'notif1' | 'pulldown' | 'pullup'
+             | 'nmos' | 'rnmos' | 'pmos' | 'rpmos' | 'cmos' | 'rcmos' | 'tran' | 'rtran'
+             | 'tranif0' | 'rtranif0' | 'tranif1' | 'rtranif1'
+delay ::= pound (number | identifier | lparen mintypmax (comma mintypmax)? (comma mintypmax)? rparen )
+gate_instance ::= identifier range? lparen terminal (comma terminal)* rparen
+terminal ::= expr | identifier
+udp_instantiation ::=udp_name drive_strength? delay? udp_instance (comma udp_instance)* semicolon
+udp_instance ::= (identifier range?)? lparen terminal (comma terminal)* rparen
+
+// behav statements
+init_stmt ::= kw_initial statement
+always_stmt ::= kw_always statement
+stmt_or_null ::= statement | semicolon
+statement ::= blocking_assign
+    | nonblock_assign
+    | kw_if lparen expr rparen stmt_or_null ((kw_else stmt_or_null)?)
+    | (kw_case | kw_casex | kw_casez) lparen expr rparen case_item+ kw_endcase
+    | kw_forever statement
+    | kw_repeat lparen expr rparen statement
+    | kw_while lparen expr rparen statement
+    | kw_for lparen assignment semicolon expr semicolon assignment rparen statement
+    | dly_or_evt_ctl stmt_or_null
+    | kw_wait lparen expr rparen stmt_or_null
+    | rarrow identifier semicolon
+    | sequential_block
+    | parallel_block
+    | task_enable
+    | sys_task_enable
+    | kw_disable identifier semicolon
+    | kw_assign assignment semicolon
+    | kw_deassign lvalue semicolon
+    | kw_force assignment semicolon
+    | kw_release lvalue semicolon
+
+assignment ::= lvalue equals expr
+blocking_assign ::= (assignment | (lvalue equals dly_or_evt_ctl expr)) semicolon
+nonblock_assign ::= (lvalue nbequals expr semicolon) | (lvalue equals dly_or_evt_ctl expr semicolon)
+dly_or_evt_ctl ::= dly_ctl | evt_ctl | (kw_repeat lparen expr rparen evt_ctl)
+case_item ::= (expr (comma expr)* colon stmt_or_null)
+    | (kw_default colon stmt_or_null)
+    | (kw_default stmt_or_null)
+
+sequential_block ::= (kw_begin statement* kw_end) | (kw_begin colon identifier blkdecl* statement* kw_end)
+parallel_block ::= (kw_fork statement* kw_join) | (kw_fork colon identifier blkdecl* statement* kw_join)
+
+blkdecl ::= param_decl | reg_decl | int_decl | real_decl | time_decl | event_decl
+
+task_enable ::= identifier (lparen expr (comma expr)* rparen)? semicolon
+sys_task_enable ::= sysidentifier (lparen expr (comma expr)* rparen)? semicolon
+
+// expressions
+
+
+lvalue ::= (identifier lbrack expr rbrack)
+    | (identifier range)
+    | (identifier)
+    | concatenation
+
+constexpr ::= expr
+mintypmax ::= expr | (expr colon expr colon expr)
+
+/*expr ::= ( expr (unar_or_bin_op | binary_op) expr)
+    | ((unar_or_bin_op | unary_op) expr)
+    | (expr question expr colon expr)
+    | QUOTED_STRING
+    | (primary)*/
+expr ::= (unar_or_bin_op | unary_op)? primary (binaryOperations)?
+binaryOperations ::= ((unar_or_bin_op | binary_op) expr)
+    | (question expr colon expr)
+
+unar_or_bin_op ::= '+' | '-' | '&' | '|' | '^~' | '~^' | '^'
+unary_op ::= '!' | '~' | '~&' | '^|'
+binary_op ::= '*' | '/' | '%'
+    | '==' | '!=' | '===' | '!==' | '&&' | '||' | '<=' | '>=' | '<' | '>'
+    | nbequals
+    |'>>' | '<<'
+
+primary ::= number | (identifier lbrack expr rbrack) | (identifier range)
+    | concatenation | multiple_concat | function_call | (lparen mintypmax rparen) | identifier
+    | QUOTED_STRING
+number ::= (dec_frac)
+    | (num_with_base)
+    | (num_sci)
+    | unsigned
+    | dec_num
+
+concatenation ::= lbrace expr (comma expr)* rbrace
+multiple_concat ::= lbrace expr lbrace expr (comma expr)* rbrace rbrace
+function_call ::= identifier lparen expr (comma expr)* rparen
+    | sysidentifier lparen expr (comma expr)* rparen
+    | sysidentifier
+dly_ctl ::= (pound number) | (pound identifier) | (pound lparen mintypmax rparen)
+evt_ctl ::= (at identifier) | (at lparen event_expr rparen)
+event_expr ::= expr | (kw_posedge expr) | (kw_negedge expr) | (event_expr kw_or event_expr)
