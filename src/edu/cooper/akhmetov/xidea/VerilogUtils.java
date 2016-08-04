@@ -46,11 +46,11 @@ public class VerilogUtils {
             VerilogFile verFile = (VerilogFile) PsiManager.getInstance(project).findFile(virtualFile);
             if (verFile != null) {
                 VerilogDescription[] descriptions = PsiTreeUtil.getChildrenOfType(verFile, VerilogDescription.class);
-                System.out.println(virtualFile+":"+(descriptions==null?"null":descriptions.length));
+               // System.out.println(virtualFile+":"+(descriptions==null?"null":descriptions.length));
                 if (descriptions != null) {
                     for (VerilogDescription desc : descriptions) {
                         VerilogModule mdl = desc.getModule();
-                        System.out.println("Found "+mdl.getName()+" in "+virtualFile);
+                       // System.out.println("Found "+mdl.getName()+" in "+virtualFile);
                         if (mdl != null && key.equals(mdl.getName())) {
                             if (result == null) {
                                 result = new ArrayList<VerilogModule>();
@@ -216,6 +216,15 @@ public class VerilogUtils {
             VerilogVariableName[] vvns = PsiTreeUtil.getChildrenOfType(item, VerilogVariableName.class);
             if (vvns != null) {
                 Collections.addAll(vars, vvns);
+            }
+        } else if (item instanceof VerilogContAssign){
+            VerilogContAssign vca = (VerilogContAssign) item;
+            VerilogAssignList val = vca.getAssignList();
+            for(VerilogAssignment va : val.getAssignmentList()){
+                VerilogLvalue lvalue = va.getLvalue();
+                if(lvalue.getVariableName()!=null && lvalue.getRange()==null && lvalue.getExpr()==null){
+                    vars.add(lvalue.getVariableName());
+                }
             }
         }
     }

@@ -25,7 +25,7 @@ WHITE_SPACE=\s
 TIMEBASE=[0-9]+[ \t\n\x0B\f\r]*[munpf]?s
 NEWLINE=[\r\n]
 WHITE_SPACE=[ \t\n\x0B\f\r]
-LINE_COMMENT="//".*
+LINE_COMMENT=("//"[^\r\n]*[\r\n]?)*"//"[^\r\n]*
 BLOCK_COMMENT="/"\*([^*]|\*+[^*/])*(\*+"/")?
 QUOTED_STRING=\"([^\\\"\r\n]|\\[^\r\n])*\"?
 DEC_NUM=[0-9_]+
@@ -95,6 +95,14 @@ SYSIDENTIFIER=\$[a-zA-Z_][a-zA-Z0-9_$]*
   "deassign"           { return KW_DEASSIGN; }
   "force"              { return KW_FORCE; }
   "release"            { return KW_RELEASE; }
+  "generate"           { return KW_GENERATE; }
+  "endgenerate"        { return KW_ENDGENERATE; }
+  "task"               { return KW_TASK; }
+  "endtask"            { return KW_ENDTASK; }
+  "function"           { return KW_FUNCTION; }
+  "endfunction"        { return KW_ENDFUNCTION; }
+  "scalared"           { return KW_SCALARED; }
+  "vectored"           { return KW_VECTORED; }
   "default"            { return KW_DEFAULT; }
   "begin"              { return KW_BEGIN; }
   "end"                { return KW_END; }
@@ -125,11 +133,10 @@ SYSIDENTIFIER=\$[a-zA-Z_][a-zA-Z0-9_$]*
   ">"                  { return GT; }
   ">>"                 { return SHR; }
   "<<"                 { return SHL; }
+  "(*"                 { return LATTR; }
+  "*)"                 { return RATTR; }
   "`timescale"         { return BT_TIMESCALE; }
-  "task"               { return TASK; }
-  "function"           { return FUNCTION; }
-  "kw_scalared"        { return KW_SCALARED; }
-  "kw_vectored"        { return KW_VECTORED; }
+  "genvar"             { return GENVAR; }
 
   {TIMEBASE}           { return TIMEBASE; }
   {NEWLINE}            { return NEWLINE; }

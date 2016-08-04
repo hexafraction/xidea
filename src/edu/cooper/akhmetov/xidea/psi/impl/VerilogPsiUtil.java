@@ -88,7 +88,7 @@ public class VerilogPsiUtil {
     }
     public static PsiElement resolve(VerilogModuleName ref){
         //System.out.println("called resolve!");
-        new Exception().printStackTrace();
+        //new Exception().printStackTrace();
        /* List<VerilogModule> mdls = VerilogUtils.findModules(ref.getProject(), ref.getIdentifier().getText());
         if(mdls.isEmpty()) return null;
         else return mdls.get(0);*/
@@ -97,7 +97,7 @@ public class VerilogPsiUtil {
     }
 
     public static String getCanonicalText(VerilogModuleName ref){
-        System.out.println("canon: "+ref.getIdentifier().getText());
+        //System.out.println("canon: "+ref.getIdentifier().getText());
         return ref.getIdentifier().getText();
     }
 
@@ -159,7 +159,7 @@ public class VerilogPsiUtil {
     }
     public static PsiElement resolve(VerilogUdpName ref){
         //System.out.println("called resolve!");
-        new Exception().printStackTrace();
+       // new Exception().printStackTrace();
        /* List<VerilogModule> mdls = VerilogUtils.findModules(ref.getProject(), ref.getIdentifier().getText());
         if(mdls.isEmpty()) return null;
         else return mdls.get(0);*/
@@ -168,7 +168,7 @@ public class VerilogPsiUtil {
     }
 
     public static String getCanonicalText(VerilogUdpName ref){
-        System.out.println("canon: "+ref.getIdentifier().getText());
+        //System.out.println("canon: "+ref.getIdentifier().getText());
         return ref.getIdentifier().getText();
     }
 
@@ -250,7 +250,7 @@ public class VerilogPsiUtil {
     }
     public static PsiElement resolve(VerilogVariableName ref){
         //System.out.println("called resolve!");
-        new Exception().printStackTrace();
+       // new Exception().printStackTrace();
        /* List<VerilogModule> mdls = VerilogUtils.findModules(ref.getProject(), ref.getIdentifier().getText());
         if(mdls.isEmpty()) return null;
         else return mdls.get(0);*/
@@ -259,7 +259,7 @@ public class VerilogPsiUtil {
     }
 
     public static String getCanonicalText(VerilogVariableName ref){
-        System.out.println("canon: "+ref.getIdentifier().getText());
+        //System.out.println("canon: "+ref.getIdentifier().getText());
         return ref.getIdentifier().getText();
     }
 

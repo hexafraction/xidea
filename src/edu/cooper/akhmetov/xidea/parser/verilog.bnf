@@ -21,7 +21,7 @@
     kw_module='module'
     kw_endmodule='endmodule'
     //space='regexp:\s+'
-    LINE_COMMENT='regexp://.*'
+    LINE_COMMENT='regexp:(//[^\r\n]*[\r\n]?)*//[^\r\n]*'
     BLOCK_COMMENT='regexp:/\*([^*]|\*+[^*/])*(\*+/)?'
     QUOTED_STRING="regexp:\"([^\\\"\r\n]|\\[^\r\n])*\"?"
     semicolon=';'
@@ -126,6 +126,8 @@
     gt='>'
     shr='>>'
     shl='<<'
+    lattr='(*'
+    rattr='*)'
     bt_timescale='`timescale'
   ]
 }
@@ -135,10 +137,10 @@
 
 verilogFile ::= timescale? description*
 timescale ::= bt_timescale timebase solidus timebase
-
+attrs ::= lattr attr (comma attr)? rattr
+attr ::= identifier equals QUOTED_STRING
 description ::= module | udp
-
-module ::= kw_module module_name portlist? semicolon
+module ::= attrs? kw_module module_name portlist? semicolon
     module_item*
     kw_endmodule {mixin="edu.cooper.akhmetov.xidea.psi.impl.VerilogNamedElementImpl"
                    implements="edu.cooper.akhmetov.xidea.psi.VerilogNamedElement" methods=[getName setName getNameIdentifier]}
@@ -166,7 +168,7 @@ gen_stmt ::= kw_generate statement+ kw_endgenerate
 udp_name ::= identifier {mixin="edu.cooper.akhmetov.xidea.psi.impl.VerilogReferenceImpl"
                                                      implements="edu.cooper.akhmetov.xidea.psi.VerilogReference"
                                                       methods=[getElement getRangeInElement resolve getCanonicalText handleElementRename bindToElement isReferenceTo getVariants isSoft multiResolve getName setName]}
-udp ::= kw_primitive udp_name lparen varlist rparen semicolon
+udp ::= attrs? kw_primitive udp_name lparen varlist rparen semicolon
     udp_decl+
     udp_init?
     udp_table
@@ -188,7 +190,8 @@ edge ::= (lparen tbl_lev tbl_lev rparen) | tbl_edge
 range_or_type ::= range | kw_integer | kw_real
 function_name ::= identifier
 tf_declaration ::= param_decl | input_decl | output_decl | inout_decl | reg_decl | time_decl | int_decl | real_decl
-
+private recover_assign ::= !(';' | ',')
+private recover_paren ::= !(';' | ','|rparen)
 // declarations
 varlist ::= variable_name (comma variable_name)*
 varlist_assign ::= (varlist) | varlist_fancy
@@ -196,15 +199,15 @@ varlist_fancy ::= nettype expandrange? delay? assign_list
 assign_list ::= assignment (comma assignment)*
 param_decl ::= kw_parameter param_assign (comma param_assign)* semicolon
 param_assign ::= variable_name equals constexpr
-output_decl ::= kw_output kw_reg? range? varlist_assign semicolon
-inout_decl ::= kw_inout range? varlist_assign semicolon
-input_decl ::= kw_input range? varlist_assign semicolon
-int_decl ::= (kw_integer | genvar) regvar_list semicolon
-reg_decl ::= kw_reg range? regvar_list semicolon
-time_decl ::= kw_time range? regvar_list semicolon
-real_decl ::= kw_real range? regvar_list semicolon
-event_decl ::= kw_event variable_name (comma variable_name)*
-net_decl ::= (nettype expandrange? delay? varlist semicolon)
+output_decl ::= attrs? kw_output kw_reg? range? varlist_assign semicolon
+inout_decl ::= attrs? kw_inout range? varlist_assign semicolon
+input_decl ::= attrs? kw_input range? varlist_assign semicolon
+int_decl ::= attrs? (kw_integer | genvar) regvar_list semicolon
+reg_decl ::= attrs? kw_reg range? regvar_list range? semicolon
+time_decl ::=attrs? kw_time range? regvar_list semicolon
+real_decl ::= attrs? kw_real range? regvar_list semicolon
+event_decl ::= attrs? kw_event variable_name (comma variable_name)*
+net_decl ::= attrs? (nettype expandrange? delay? varlist semicolon)
 expandrange ::= ((kw_scalared|kw_vectored)? range)
 nettype ::= 'wire' | 'tri' | 'tri1' | 'supply0' | 'wand' | 'triand' | 'tri0' | 'supply1' | 'wor' | 'trior' | 'trireg'
 cont_assign ::= (kw_assign drive_strength? delay? assign_list semicolon)
@@ -219,13 +222,13 @@ str1 ::= 'supply1' | 'strong1' | 'pull1' | 'weak1' | 'highz1'
 
 
 // module instantiation
-module_instantiation ::= module_name param_val_assign? module_instance (comma module_instance)* semicolon
+module_instantiation ::= attrs? module_name param_val_assign? module_instance (comma module_instance)* semicolon
 param_val_assign ::= param_val_assign_old | param_val_assign_new
 param_val_assign_new ::= pound lparen namedplug (comma namedplug)* rparen
 param_val_assign_old ::= pound lparen expr (comma expr)* rparen
 namedplug ::= dot port_name lparen expr rparen
-module_instance ::= identifier lparen connlist? rparen
-connlist ::= (namedplug (comma namedplug)*) | (modport (comma modport)*)
+module_instance ::= identifier connlist
+connlist ::= lparen ((namedplug (comma namedplug)*) | (modport (comma modport)*))? rparen
 modport ::= expr?
 
 //primitive instances
@@ -237,7 +240,7 @@ gatetype ::= 'and' | 'nand' | 'or' | 'nor' | 'xor' | 'xnor' | 'buf'
 delay ::= pound (number | variable_name | lparen mintypmax (comma mintypmax)? (comma mintypmax)? rparen )
 gate_instance ::= identifier range? lparen terminal (comma terminal)* rparen
 terminal ::= expr | variable_name
-udp_instantiation ::=udp_name drive_strength? delay? udp_instance (comma udp_instance)* semicolon
+udp_instantiation ::= attrs? udp_name drive_strength? delay? udp_instance (comma udp_instance)* semicolon
 udp_instance ::= (identifier range?)? lparen terminal (comma terminal)* rparen
 
 // behav statements

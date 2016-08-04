@@ -26,6 +26,7 @@
     <lang.parserDefinition language="Verilog" implementationClass="edu.cooper.akhmetov.xidea.VerilogParserDefinition"/>
     <lang.syntaxHighlighterFactory key="Verilog" implementationClass="edu.cooper.akhmetov.xidea.psi.VerilogSyntaxHighlighterFactory"/>
     <annotator language="Verilog" implementationClass="edu.cooper.akhmetov.xidea.VerilogAnnotator"/>
+    <lang.foldingBuilder language="Verilog" implementationClass="edu.cooper.akhmetov.xidea.VerilogFoldingBuilder"/>
   </extensions>
 
   <actions>
