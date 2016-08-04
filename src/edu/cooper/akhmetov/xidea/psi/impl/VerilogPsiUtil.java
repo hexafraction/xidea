@@ -314,8 +314,7 @@ public class VerilogPsiUtil {
     }
 
     public static boolean isReferenceTo(VerilogVariableName ref, PsiElement elem){
-        //TODO TODO
-        return false;
+        return elem==resolve(ref);
     }
 
     public static Object[] getVariants(VerilogVariableName ref){
@@ -360,7 +359,7 @@ public class VerilogPsiUtil {
     public static PsiElement handleElementRename(VerilogVariableName ref, String name){
         ASTNode identNode = ref.getNode().findChildByType(VerilogTypes.IDENTIFIER);
         if (identNode != null) {
-            ASTNode newIdent = VerilogElementFactory.createModuleName(ref.getProject(), name).getIdentifier().getNode();
+            ASTNode newIdent = VerilogElementFactory.createVariableName(ref.getProject(), name).getIdentifier().getNode();
             ref.getNode().replaceChild(identNode, newIdent);
         }
         return ref;
@@ -372,9 +371,6 @@ public class VerilogPsiUtil {
         } else throw new IncorrectOperationException();
 
     }
-
-
-
 
     //</editor-fold>
 

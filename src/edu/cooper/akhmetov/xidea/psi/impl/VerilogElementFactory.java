@@ -22,6 +22,7 @@ package edu.cooper.akhmetov.xidea.psi.impl;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.util.PsiTreeUtil;
 import edu.cooper.akhmetov.xidea.VerilogFileType;
 import edu.cooper.akhmetov.xidea.psi.*;
 
@@ -31,8 +32,14 @@ import edu.cooper.akhmetov.xidea.psi.*;
 public class VerilogElementFactory {
     public static VerilogModuleName createModuleName(Project p, String name){
         final VerilogFile f = createFile(p, "module "+ name + "; endmodule");
-        VerilogModule vm = (VerilogModule) f.getFirstChild();
+        VerilogModule vm = (VerilogModule) f.getFirstChild().getFirstChild();
         return vm.getModuleName();
+    }
+
+    public static VerilogVariableName createVariableName(Project p, String name){
+        final VerilogFile f = createFile(p, "module a; reg "+ name + "; endmodule");
+        VerilogVariableName vm = PsiTreeUtil.findChildrenOfType(f, VerilogVariableName.class).iterator().next();
+        return vm;
     }
 
     public static VerilogFile createFile(Project project, String text) {
@@ -44,7 +51,7 @@ public class VerilogElementFactory {
 
     public static VerilogUdpName createUdpName(Project p, String name) {
         final VerilogFile f = createFile(p, "primitive "+name+"(a); input a; table 0 : 1; endtable endprimitive");
-        VerilogUdp vm = (VerilogUdp) f.getFirstChild();
+        VerilogUdp vm = (VerilogUdp) f.getFirstChild().getFirstChild();
         return vm.getUdpName();
     }
 }
