@@ -20,8 +20,9 @@
 
 package edu.cooper.akhmetov.xidea.psi;
 
+import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiNameIdentifierOwner;
 
 
-public interface VerilogNamedElement extends PsiNameIdentifierOwner {
+public interface VerilogNamedElement extends PsiNameIdentifierOwner, NavigationItem {
 }

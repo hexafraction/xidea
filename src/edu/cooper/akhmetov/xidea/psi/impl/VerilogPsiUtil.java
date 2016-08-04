@@ -21,6 +21,7 @@
 package edu.cooper.akhmetov.xidea.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
@@ -28,10 +29,13 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
+import edu.cooper.akhmetov.xidea.Icons;
 import edu.cooper.akhmetov.xidea.VerilogUtils;
 import edu.cooper.akhmetov.xidea.parser.VerilogTypes;
 import edu.cooper.akhmetov.xidea.psi.*;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,6 +80,52 @@ public class VerilogPsiUtil {
 
     public static PsiElement getNameIdentifier(VerilogUdp element) {
         return element.getUdpName();
+    }
+
+    public static ItemPresentation getPresentation(final VerilogModule element) {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return element.getName();
+            }
+
+            @Nullable
+            @Override
+            public String getLocationString() {
+                String fname = element.getContainingFile().getName();
+                return fname.substring(fname.lastIndexOf('/')+1);
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return Icons.MODULE;
+            }
+        };
+    }
+
+    public static ItemPresentation getPresentation(final VerilogUdp element) {
+        return new ItemPresentation() {
+            @Nullable
+            @Override
+            public String getPresentableText() {
+                return element.getName();
+            }
+
+            @Nullable
+            @Override
+            public String getLocationString() {
+                String fname = element.getContainingFile().getName();
+                return fname.substring(fname.lastIndexOf('/')+1);
+            }
+
+            @Nullable
+            @Override
+            public Icon getIcon(boolean unused) {
+                return Icons.PRIMITIVE;
+            }
+        };
     }
 
     //<editor-fold desc="Module name reference">

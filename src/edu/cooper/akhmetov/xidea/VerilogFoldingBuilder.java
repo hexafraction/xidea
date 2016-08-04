@@ -42,9 +42,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- * Created by Andrey Akhmetov on 8/3/2016.
- */
+
 public class VerilogFoldingBuilder extends FoldingBuilderEx {
     @NotNull
     @Override
@@ -87,6 +85,12 @@ public class VerilogFoldingBuilder extends FoldingBuilderEx {
                 PsiTreeUtil.findChildrenOfType(root, VerilogPortlist.class);
         for (final VerilogPortlist vpl : vpls) {
             buildDescriptors(descriptors, vpl, "(...)");
+        }
+
+        Collection<VerilogParamValAssign> vpvas =
+                PsiTreeUtil.findChildrenOfType(root, VerilogParamValAssign.class);
+        for (final VerilogParamValAssign vpva : vpvas) {
+            buildDescriptors(descriptors, vpva, "#(...)");
         }
 
         Collection<PsiComment> comments =

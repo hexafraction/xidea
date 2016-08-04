@@ -143,7 +143,7 @@ description ::= module | udp
 module ::= attrs? kw_module module_name portlist? semicolon
     module_item*
     kw_endmodule {mixin="edu.cooper.akhmetov.xidea.psi.impl.VerilogNamedElementImpl"
-                   implements="edu.cooper.akhmetov.xidea.psi.VerilogNamedElement" methods=[getName setName getNameIdentifier]}
+                   implements="edu.cooper.akhmetov.xidea.psi.VerilogNamedElement" methods=[getName setName getNameIdentifier getPresentation]}
 
 portlist ::= lparen (port (comma port)*)? rparen
 port ::= new_port|old_port
@@ -173,7 +173,7 @@ udp ::= attrs? kw_primitive udp_name lparen varlist rparen semicolon
     udp_init?
     udp_table
     kw_endprimitive {mixin="edu.cooper.akhmetov.xidea.psi.impl.VerilogNamedElementImpl"
-                                       implements="edu.cooper.akhmetov.xidea.psi.VerilogNamedElement" methods=[getName setName getNameIdentifier]}
+                                       implements="edu.cooper.akhmetov.xidea.psi.VerilogNamedElement" methods=[getName setName getNameIdentifier getPresentation]}
 udp_decl ::= output_decl|reg_decl|input_decl
 udp_init ::= kw_initial variable_name equals udp_init_val semicolon
 udp_init_val ::= "1'b0" | "1'b1" | "1'bx" | "1'bX" | "1'B0" | "1'B1" | "1'Bx" | "1'BX" | 1 | 0

@@ -27,4 +27,6 @@ import javax.swing.*;
 
 public class Icons {
     public static final Icon FILE_V = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_verilog.png");
+    public static final Icon MODULE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_module.png");
+    public static final Icon PRIMITIVE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_primitive.png");
 }
