@@ -28,7 +28,9 @@
     <annotator language="Verilog" implementationClass="edu.cooper.akhmetov.xidea.VerilogAnnotator"/>
     <lang.foldingBuilder language="Verilog" implementationClass="edu.cooper.akhmetov.xidea.VerilogFoldingBuilder"/>
     <gotoSymbolContributor implementation="edu.cooper.akhmetov.xidea.VerilogChooseByNameContributor"/>
-    <configurationType implementation="edu.cooper.akhmetov.xidea.run.XstSynthesisConfigurationType"/>
+    <configurationType implementation="edu.cooper.akhmetov.xidea.ise.run.XstSynthesisConfigurationType"/>
+    <programRunner implementation="edu.cooper.akhmetov.xidea.ise.run.XstSynthesisRunner" />
+    <moduleBuilder builderClass="edu.cooper.akhmetov.xidea.structure.XIdeaModuleBuilder" />
   </extensions>
 
   <actions>

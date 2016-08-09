@@ -18,14 +18,14 @@
  *
  */
 
-package edu.cooper.akhmetov.xidea.run;
+package edu.cooper.akhmetov.xidea.ise.run;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RunConfigurationModule;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.SourceFolder;
+import org.jetbrains.annotations.NotNull;
 
 
 public class XstConfigurationFactory extends ConfigurationFactory {
@@ -36,9 +36,9 @@ public class XstConfigurationFactory extends ConfigurationFactory {
     }
 
     @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
 
-        return new XstRunConfiguration(project, this, "Demo");
+        return new XstRunConfiguration(new RunConfigurationModule(project), this);
     }
 
     @Override

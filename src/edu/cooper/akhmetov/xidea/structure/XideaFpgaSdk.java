@@ -18,18 +18,19 @@
  *
  */
 
-package edu.cooper.akhmetov.xidea;
+package edu.cooper.akhmetov.xidea.structure;
 
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.projectRoots.*;
+import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import java.util.List;
 
 
-public class Icons {
-    public static final Icon FILE_V = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_verilog.png");
-    public static final Icon MODULE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_module.png");
-    public static final Icon PRIMITIVE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_primitive.png");
-    public static final Icon XST = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_xst.png");
-    public static final Icon CHIP = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_chip.png");
+public abstract class XideaFpgaSdk extends SdkType {
+    public XideaFpgaSdk(@NotNull String name) {
+        super(name);
+    }
+    public abstract List<FpgaPartIdentifier> getDevices();
+
+
 }
-

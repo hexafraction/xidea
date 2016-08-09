@@ -18,18 +18,19 @@
  *
  */
 
-package edu.cooper.akhmetov.xidea;
+package edu.cooper.akhmetov.xidea.structure;
 
-import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.JpsDummyElement;
+import org.jetbrains.jps.model.JpsElementChildRole;
+import org.jetbrains.jps.model.ex.JpsElementTypeWithDummyProperties;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
-import javax.swing.*;
+public class RtlModuleSourceRootType extends JpsElementTypeWithDummyProperties implements JpsModuleSourceRootType<JpsDummyElement> {
+    private RtlModuleSourceRootType(){}
+    public static final RtlModuleSourceRootType RTL_SOURCE = new RtlModuleSourceRootType();
+    public static final RtlModuleSourceRootType RTL_TEST_SOURCE = new RtlModuleSourceRootType();
 
 
-public class Icons {
-    public static final Icon FILE_V = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_verilog.png");
-    public static final Icon MODULE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_module.png");
-    public static final Icon PRIMITIVE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_primitive.png");
-    public static final Icon XST = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_xst.png");
-    public static final Icon CHIP = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_chip.png");
+
 }
-

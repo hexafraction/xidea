@@ -18,18 +18,16 @@
  *
  */
 
-package edu.cooper.akhmetov.xidea;
+package edu.cooper.akhmetov.xidea.structure;
 
-import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.jps.model.JpsDummyElement;
+import org.jetbrains.jps.model.ex.JpsElementTypeWithDummyProperties;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
-import javax.swing.*;
+public class ConstraintModuleSourceRootType extends JpsElementTypeWithDummyProperties implements JpsModuleSourceRootType<JpsDummyElement> {
+    private ConstraintModuleSourceRootType(){}
+    public static final ConstraintModuleSourceRootType IMPLEMENTATION_CONSTRAINTS = new ConstraintModuleSourceRootType();
 
 
-public class Icons {
-    public static final Icon FILE_V = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_verilog.png");
-    public static final Icon MODULE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_module.png");
-    public static final Icon PRIMITIVE = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_primitive.png");
-    public static final Icon XST = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_xst.png");
-    public static final Icon CHIP = IconLoader.getIcon("/edu/cooper/akhmetov/xidea/icons/ic_chip.png");
+
 }
-

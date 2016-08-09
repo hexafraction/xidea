@@ -20,24 +20,15 @@
 
 package edu.cooper.akhmetov.xidea.run;
 
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.ide.util.PackageChooserDialog;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.PackageChooser;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Key;
-import com.intellij.ui.EditorTextFieldWithBrowseButton;
-import com.intellij.ui.components.JBTabbedPane;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.sun.istack.internal.NotNull;
+import edu.cooper.akhmetov.xidea.ise.run.XstRunConfiguration;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 

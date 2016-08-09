@@ -18,11 +18,10 @@
  *
  */
 
-package edu.cooper.akhmetov.xidea.run;
+package edu.cooper.akhmetov.xidea.ise.run;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.icons.AllIcons;
 import edu.cooper.akhmetov.xidea.Icons;
 import org.jetbrains.annotations.NotNull;
 

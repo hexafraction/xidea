@@ -23,6 +23,7 @@ package edu.cooper.akhmetov.xidea;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -30,10 +31,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import edu.cooper.akhmetov.xidea.psi.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class VerilogUtils {
@@ -46,11 +45,11 @@ public class VerilogUtils {
             VerilogFile verFile = (VerilogFile) PsiManager.getInstance(project).findFile(virtualFile);
             if (verFile != null) {
                 VerilogDescription[] descriptions = PsiTreeUtil.getChildrenOfType(verFile, VerilogDescription.class);
-               // System.out.println(virtualFile+":"+(descriptions==null?"null":descriptions.length));
+                // System.out.println(virtualFile+":"+(descriptions==null?"null":descriptions.length));
                 if (descriptions != null) {
                     for (VerilogDescription desc : descriptions) {
                         VerilogModule mdl = desc.getModule();
-                       // System.out.println("Found "+mdl.getName()+" in "+virtualFile);
+                        // System.out.println("Found "+mdl.getName()+" in "+virtualFile);
                         if (mdl != null && key.equals(mdl.getName())) {
                             if (result == null) {
                                 result = new ArrayList<VerilogModule>();
@@ -165,6 +164,58 @@ public class VerilogUtils {
         return vars;
     }
 
+    public static List<VerilogModuleInstantiation> findModuleDependencies(VerilogModule mdl) {
+        ArrayList<VerilogModuleInstantiation> vars = new ArrayList<>();
+        VerilogModuleItem[] mdItems = PsiTreeUtil.getChildrenOfType(mdl, VerilogModuleItem.class);
+        if (mdItems == null) {
+
+        } else {
+            for(int i = 0; i < mdItems.length; i++){
+                if(mdItems[i].getModuleInstantiation()!=null){
+                    vars.add(mdItems[i].getModuleInstantiation());
+                }
+            }
+        }
+        return vars;
+    }
+
+    public static List<VerilogUdpInstantiation> findUdpDependencies(VerilogModule mdl) {
+        ArrayList<VerilogUdpInstantiation> vars = new ArrayList<>();
+        VerilogModuleItem[] mdItems = PsiTreeUtil.getChildrenOfType(mdl, VerilogModuleItem.class);
+        if (mdItems == null) {
+
+        } else {
+            for(int i = 0; i < mdItems.length; i++){
+                if(mdItems[i].getUdpInstantiation()!=null){
+                    vars.add(mdItems[i].getUdpInstantiation());
+                }
+            }
+        }
+        return vars;
+    }
+
+    public static Set<PsiFile> getFileDependencies(VerilogModule root){
+        HashSet<PsiFile> files = new HashSet<>();
+        HashSet<VerilogModule> visited = new HashSet<>();
+        HashSet<VerilogUdp> udps = new HashSet<>();
+        PsiFile rootFile = root.getContainingFile();
+        recurseFileDependencies(root, visited, udps);
+        visited.stream().map(VerilogModule::getContainingFile).forEach(files::add);
+        udps.stream().map(VerilogUdp::getContainingFile).forEach(files::add);
+        return files;
+    }
+
+    private static void recurseFileDependencies(VerilogModule root, Set<VerilogModule> visited, Set<VerilogUdp> udps) {
+        findModuleDependencies(root).stream().map(vim -> findModules(root.getProject(), vim.getModuleName().getText()))
+                .flatMap(Collection::stream).collect(Collectors.toSet()).stream().filter(visited::add).forEach(vm -> recurseFileDependencies(vm, visited, udps));
+        findUdpDependencies(root).stream().map(vim -> findModules(root.getProject(), vim.getUdpName().getText()))
+                .flatMap(Collection::stream).collect(Collectors.toSet()).stream().filter(visited::add).forEach(vm -> recurseFileDependencies(vm, visited, udps));
+        findUdpDependencies(root).stream().map(vim -> findUDPs(root.getProject(), vim.getUdpName().getText()))
+                .flatMap(Collection::stream).collect(Collectors.toSet()).stream().forEach(udps::add);
+    }
+
+
+
     public static List<VerilogVariableName> findDeclaredVariables(VerilogUdp udp) {
         ArrayList<VerilogVariableName> vars = new ArrayList<>();
         VerilogUdpDecl[] declarations = PsiTreeUtil.getChildrenOfType(udp, VerilogUdpDecl.class);
@@ -217,12 +268,12 @@ public class VerilogUtils {
             if (vvns != null) {
                 Collections.addAll(vars, vvns);
             }
-        } else if (item instanceof VerilogContAssign){
+        } else if (item instanceof VerilogContAssign) {
             VerilogContAssign vca = (VerilogContAssign) item;
             VerilogAssignList val = vca.getAssignList();
-            for(VerilogAssignment va : val.getAssignmentList()){
+            for (VerilogAssignment va : val.getAssignmentList()) {
                 VerilogLvalue lvalue = va.getLvalue();
-                if(lvalue.getVariableName()!=null && lvalue.getRange()==null && lvalue.getExpr()==null){
+                if (lvalue.getVariableName() != null && lvalue.getRange() == null && lvalue.getExpr() == null) {
                     vars.add(lvalue.getVariableName());
                 }
             }

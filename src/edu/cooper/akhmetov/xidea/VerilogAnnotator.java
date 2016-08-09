@@ -67,6 +67,8 @@ public class VerilogAnnotator implements Annotator {
         if(modules.isEmpty()){
 
             holder.createErrorAnnotation(elem.getTextRange(), "Cannot find module "+name); // TODO add intention to add module here
+        } else if (modules.size()>1){
+            holder.createWarningAnnotation(elem.getTextRange(), "Multiple definitions for module "+name);
         }
     }
     private void annotateVerilogUdpInstantiation(@NotNull PsiElement elem, @NotNull AnnotationHolder holder, VerilogUdpName vmn) {
@@ -79,6 +81,8 @@ public class VerilogAnnotator implements Annotator {
         if(modules.isEmpty() && udps.isEmpty()){
 
             holder.createErrorAnnotation(elem.getTextRange(), "Cannot find module or UDP "+name); // TODO add intention to add module here
+        } else if ((modules.size()+udps.size())>1){
+            holder.createWarningAnnotation(elem.getTextRange(), "Multiple definitions for module or UDP "+name);
         }
     }
 }
